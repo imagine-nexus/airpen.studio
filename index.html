@@ -6,17 +6,21 @@
 <title>Air Pen — Gesture Drawing Studio</title>
 <meta name="description" content="Draw with your hands in the air. A professional gesture-based drawing studio powered by computer vision. Free, no account needed."/>
 
+<!-- Google Fonts: Syne (display) + Inter (body) -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 
+<!-- MediaPipe -->
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1640029074/camera_utils.js" crossorigin="anonymous"></script>
 
+<!-- External CSS -->
 <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
+<!-- ════════ LOAD SCREEN ════════ -->
 <div id="loadScreen">
   <div class="load-logo">Air Pen</div>
   <div class="load-sub">GESTURE DRAWING STUDIO</div>
@@ -24,117 +28,62 @@
   <div class="load-status" id="loadStatus">Requesting camera access…</div>
 </div>
 
+<!-- ════════ TOAST CONTAINER ════════ -->
 <div id="toastContainer"></div>
 
+<!-- ════════ APP SHELL ════════ -->
 <div id="app">
-
+  <!-- ══════════════ TOOLBAR ══════════════ -->
   <header id="toolbar">
     <div class="logo">
-      <div class="logo-dot"></div>
-      Air Pen
+      <div class="logo-dot"></div> Air Pen
     </div>
     <span style="font-size:10px;color:var(--text-dimmer);letter-spacing:.08em;font-weight:500;">STUDIO</span>
-
     <div class="tb-sep"></div>
 
     <div class="tb-group">
-      <button class="tb-btn" id="undoBtn" title="Undo (Ctrl+Z)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
-        Undo
-      </button>
-      <button class="tb-btn" id="redoBtn" title="Redo (Ctrl+Y)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 14 20 9 15 4"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/></svg>
-        Redo
-      </button>
+      <button class="tb-btn" id="undoBtn" title="Undo (Ctrl+Z)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg> Undo</button>
+      <button class="tb-btn" id="redoBtn" title="Redo (Ctrl+Y)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 14 20 9 15 4"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/></svg> Redo</button>
     </div>
-
     <div class="tb-sep"></div>
 
     <div class="tb-group">
-      <button class="tb-btn" id="zoomInBtn" title="Zoom In (=)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-      </button>
-      <button class="tb-btn" id="zoomOutBtn" title="Zoom Out (-)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-      </button>
+      <button class="tb-btn" id="zoomInBtn" title="Zoom In (=)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
+      <button class="tb-btn" id="zoomOutBtn" title="Zoom Out (-)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg></button>
       <button class="tb-btn" id="zoomResetBtn" title="Reset zoom (0)">100%</button>
     </div>
-
     <div class="tb-sep"></div>
 
     <div class="tb-group">
-      <button class="tb-btn" id="clearBtn" title="Clear active layer">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-        Clear Layer
-      </button>
+      <button class="tb-btn" id="clearBtn" title="Clear active layer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg> Clear Layer</button>
       <button class="tb-btn danger" id="clearAllBtn" title="Clear all layers">Clear All</button>
     </div>
-
     <div class="tb-spacer"></div>
 
     <div id="statusPill">
       <div class="dot"></div>
       <span id="statusText">No hand detected</span>
+      <span id="fps-counter">0 fps</span>
     </div>
-
     <div class="tb-sep"></div>
 
-    <button class="tb-btn primary" id="exportBtn">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Export PNG
-    </button>
-    <button class="tb-btn" id="exportJpgBtn">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      JPG
-    </button>
+    <button class="tb-btn primary" id="exportBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export PNG</button>
+    <button class="tb-btn" id="exportJpgBtn">JPG</button>
   </header>
 
+  <!-- ══════════════ LEFT PANEL ══════════════ -->
   <aside id="leftPanel">
-
     <div class="panel-section">
       <div class="section-label">Tools</div>
       <div class="tool-grid">
-
-        <button class="tool-btn active" data-tool="pen" title="Pen (P)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l11.5 11.5"/></svg>
-          Pen <span class="kbd">P</span>
-        </button>
-
-        <button class="tool-btn" data-tool="brush" title="Brush (B)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.06 11.9l8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"/><path d="M7.07 14.94C5.79 16.2 4 16 4 16s-.2-1.79 1.07-3.07l4.01-4a.75.75 0 0 1 1.06 1.06l-3.07 4.01z"/></svg>
-          Brush <span class="kbd">B</span>
-        </button>
-
-        <button class="tool-btn" data-tool="line" title="Line (L)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="19" x2="19" y2="5"/></svg>
-          Line <span class="kbd">L</span>
-        </button>
-
-        <button class="tool-btn" data-tool="rect" title="Rectangle (R)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-          Rect <span class="kbd">R</span>
-        </button>
-
-        <button class="tool-btn" data-tool="circle" title="Circle (C)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>
-          Circle <span class="kbd">C</span>
-        </button>
-
-        <button class="tool-btn" data-tool="arrow" title="Arrow (A)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          Arrow <span class="kbd">A</span>
-        </button>
-
-        <button class="tool-btn" data-tool="eraser" title="Eraser (E)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 20H7L3 16l10-10 7 7-1.5 1.5"/><path d="M6.5 17.5l5-5"/></svg>
-          Eraser <span class="kbd">E</span>
-        </button>
-
-        <button class="tool-btn" data-tool="fill" title="Fill (F)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 11.08V8l-6-6H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2v-3.08"/><path d="M14 2v6h6"/><path d="M10.5 21.5a2.5 2.5 0 0 1 0-5c1.5 0 2.5 2.5 2.5 2.5s-1 2.5-2.5 2.5z"/></svg>
-          Fill <span class="kbd">G</span>
-        </button>
-
+        <button class="tool-btn active" data-tool="pen" title="Pen (P)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l11.5 11.5"/></svg> Pen <span class="kbd">P</span></button>
+        <button class="tool-btn" data-tool="brush" title="Brush (B)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9.06 11.9l8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"/><path d="M7.07 14.94C5.79 16.2 4 16 4 16s-.2-1.79 1.07-3.07l4.01-4a.75.75 0 0 1 1.06 1.06l-3.07 4.01z"/></svg> Brush <span class="kbd">B</span></button>
+        <button class="tool-btn" data-tool="line" title="Line (L)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="19" x2="19" y2="5"/></svg> Line <span class="kbd">L</span></button>
+        <button class="tool-btn" data-tool="rect" title="Rectangle (R)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg> Rect <span class="kbd">R</span></button>
+        <button class="tool-btn" data-tool="circle" title="Circle (C)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg> Circle <span class="kbd">C</span></button>
+        <button class="tool-btn" data-tool="arrow" title="Arrow (A)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg> Arrow <span class="kbd">A</span></button>
+        <button class="tool-btn" data-tool="eraser" title="Eraser (E)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 20H7L3 16l10-10 7 7-1.5 1.5"/><path d="M6.5 17.5l5-5"/></svg> Eraser <span class="kbd">E</span></button>
+        <button class="tool-btn" data-tool="fill" title="Fill (F)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 11.08V8l-6-6H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2v-3.08"/><path d="M14 2v6h6"/><path d="M10.5 21.5a2.5 2.5 0 0 1 0-5c1.5 0 2.5 2.5 2.5 2.5s-1 2.5-2.5 2.5z"/></svg> Fill <span class="kbd">G</span></button>
       </div>
     </div>
 
@@ -152,11 +101,8 @@
         <div class="swatch" data-color="#7a7a8c" style="background:#7a7a8c" title="Mid Grey"></div>
         <div class="swatch" data-color="#2a2a38" style="background:#2a2a38;border:1px solid #444" title="Deep Dark"></div>
         <div class="swatch" data-color="#1a1a1a" style="background:#1a1a1a;border:1px solid #444" title="Near Black"></div>
-        <div id="customColorBtn" title="Custom colour">
-          <input type="color" id="customColorInput" value="#00e5ff"/>
-        </div>
+        <div id="customColorBtn" title="Custom colour"><input type="color" id="customColorInput" value="#00e5ff"/></div>
       </div>
-
       <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
         <div id="activeColorSwatch" style="width:36px;height:36px;border-radius:8px;border:2px solid var(--border-hi);background:#00e5ff;flex-shrink:0;"></div>
         <div style="flex:1;">
@@ -167,63 +113,37 @@
     </div>
 
     <div class="panel-section">
-      <div class="section-label">Brush</div>
-
+      <div class="section-label">Brush Engine</div>
       <div class="slider-row">
-        <span class="slider-label">Size</span>
-        <input type="range" id="sizeSlider" min="1" max="80" value="10"/>
-        <span class="slider-val" id="sizeVal">10</span>
+        <span class="slider-label">Size</span><input type="range" id="sizeSlider" min="1" max="80" value="10"/><span class="slider-val" id="sizeVal">10</span>
       </div>
-
       <div class="slider-row">
-        <span class="slider-label">Opacity</span>
-        <input type="range" id="opacitySlider" min="5" max="100" value="100"/>
-        <span class="slider-val" id="opacityVal">100%</span>
+        <span class="slider-label">Opacity</span><input type="range" id="opacitySlider" min="5" max="100" value="100"/><span class="slider-val" id="opacityVal">100%</span>
       </div>
-
       <div class="slider-row">
-        <span class="slider-label">Smoothing</span>
-        <input type="range" id="smoothSlider" min="0" max="10" value="5"/>
-        <span class="slider-val" id="smoothVal">5</span>
+        <span class="slider-label">Smoothing</span><input type="range" id="smoothSlider" min="0" max="10" value="5"/><span class="slider-val" id="smoothVal">5</span>
       </div>
-
-      <div class="brush-preview" id="brushPreview">
-        <div id="brushPreviewDot" style="width:10px;height:10px;background:#00e5ff;border-radius:50%;"></div>
-      </div>
-
+      <div class="brush-preview" id="brushPreview"><div id="brushPreviewDot" style="width:10px;height:10px;background:#00e5ff;border-radius:50%;"></div></div>
       <div style="margin-top:10px;">
         <div style="font-size:10px;color:var(--text-dim);margin-bottom:4px;">Blend mode</div>
         <select class="blend-select" id="blendSelect">
-          <option value="source-over">Normal</option>
-          <option value="multiply">Multiply</option>
-          <option value="screen">Screen</option>
-          <option value="overlay">Overlay</option>
-          <option value="hard-light">Hard Light</option>
-          <option value="soft-light">Soft Light</option>
-          <option value="color-dodge">Color Dodge</option>
-          <option value="color-burn">Color Burn</option>
-          <option value="difference">Difference</option>
-          <option value="exclusion">Exclusion</option>
-          <option value="luminosity">Luminosity</option>
+          <option value="source-over">Normal</option><option value="multiply">Multiply</option><option value="screen">Screen</option>
+          <option value="overlay">Overlay</option><option value="hard-light">Hard Light</option><option value="soft-light">Soft Light</option>
+          <option value="color-dodge">Color Dodge</option><option value="color-burn">Color Burn</option><option value="difference">Difference</option>
         </select>
       </div>
     </div>
 
     <div class="panel-section">
-      <div class="section-label">Gesture</div>
+      <div class="section-label">Tracking UI</div>
       <div class="slider-row">
-        <span class="slider-label">Pinch sens.</span>
-        <input type="range" id="pinchSlider" min="2" max="15" value="7"/>
-        <span class="slider-val" id="pinchVal">7</span>
+        <span class="slider-label">Pan Pinch</span><input type="range" id="pinchSlider" min="2" max="15" value="7"/><span class="slider-val" id="pinchVal">7</span>
       </div>
       <div id="pinchBar"><div id="pinchFill"></div></div>
-      <div style="font-size:10px;color:var(--text-dimmer);margin-top:6px;">
-        Bar fills as fingers approach
-      </div>
     </div>
-
   </aside>
 
+  <!-- ══════════════ CANVAS STAGE ══════════════ -->
   <main id="stage">
     <div class="shape-preview-label" id="emptyLabel">✦ Show your hand to begin</div>
 
@@ -233,82 +153,69 @@
     </div>
 
     <div id="inkDrop" style="display:none;width:16px;height:16px;"></div>
-
     <svg id="eraserRing" width="80" height="80">
       <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,82,82,0.25)" stroke-width="4"/>
-      <circle id="eraserArc" cx="40" cy="40" r="34" fill="none"
-        stroke="#ff5252" stroke-width="4"
-        stroke-dasharray="213.6" stroke-dashoffset="213.6"
-        stroke-linecap="round"
-        transform="rotate(-90 40 40)"/>
+      <circle id="eraserArc" cx="40" cy="40" r="34" fill="none" stroke="#ff5252" stroke-width="4" stroke-dasharray="213.6" stroke-dashoffset="213.6" stroke-linecap="round" transform="rotate(-90 40 40)"/>
     </svg>
 
     <button id="camToggle">📷 Hide cam</button>
-
     <div id="zoomBadge">100%</div>
   </main>
 
+  <!-- ══════════════ RIGHT PANEL ══════════════ -->
   <aside id="rightPanel">
-
     <div class="panel-section">
       <div class="section-label">Layers</div>
-
       <div id="layerList"></div>
-
       <div class="layer-actions" style="margin-top:8px;">
-        <button class="tb-btn" id="addLayerBtn" style="flex:1;justify-content:center;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add Layer
-        </button>
-        <button class="tb-btn danger" id="delLayerBtn" style="flex:1;justify-content:center;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-          Delete
-        </button>
+        <button class="tb-btn" id="addLayerBtn" style="flex:1;justify-content:center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Layer</button>
+        <button class="tb-btn danger" id="delLayerBtn" style="flex:1;justify-content:center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg> Delete</button>
       </div>
       <div style="margin-top:6px;">
         <div class="slider-row">
-          <span class="slider-label">Opacity</span>
-          <input type="range" id="layerOpacitySlider" min="0" max="100" value="100"/>
-          <span class="slider-val" id="layerOpacityVal">100%</span>
+          <span class="slider-label">Opacity</span><input type="range" id="layerOpacitySlider" min="0" max="100" value="100"/><span class="slider-val" id="layerOpacityVal">100%</span>
         </div>
       </div>
     </div>
 
+    <!-- NEW GESTURE GUIDE -->
     <div class="panel-section">
-      <div class="section-label">Gesture guide</div>
-
+      <div class="section-label">New Pro Gestures</div>
+      <div class="gesture-row">
+        <div class="gesture-icon">☝️</div>
+        <div class="gesture-body">
+          <div class="gesture-title">Index up — Draw / Place</div>
+          <div class="gesture-desc">Raise only your index finger to draw or place shapes seamlessly.</div>
+        </div>
+      </div>
       <div class="gesture-row">
         <div class="gesture-icon">🤏</div>
         <div class="gesture-body">
-          <div class="gesture-title">Pinch — Draw / Place</div>
-          <div class="gesture-desc">Bring thumb + index together to draw, or confirm a shape start/end point.</div>
+          <div class="gesture-title">Pinch — Pan Canvas</div>
+          <div class="gesture-desc">Pinch your thumb and index together to drag and pan the canvas.</div>
         </div>
       </div>
-
       <div class="gesture-row">
         <div class="gesture-icon">✌️</div>
         <div class="gesture-body">
-          <div class="gesture-title">Hover — Aim cursor</div>
-          <div class="gesture-desc">Separate fingers — a glowing ink-drop cursor tracks your index tip.</div>
+          <div class="gesture-title">Two fingers — Hover</div>
+          <div class="gesture-desc">Raise two or more fingers to hover your cursor without drawing.</div>
         </div>
       </div>
-
       <div class="gesture-row">
         <div class="gesture-icon">🖐️</div>
         <div class="gesture-body">
-          <div class="gesture-title">Open palm — Erase / Wipe</div>
-          <div class="gesture-desc">All fingers spread erases locally. Hold 2 s to wipe the active layer.</div>
+          <div class="gesture-title">Open palm — Erase</div>
+          <div class="gesture-desc">All fingers spread erases locally. Hold 2s to wipe the active layer.</div>
         </div>
       </div>
-
       <div class="gesture-row">
         <div class="gesture-icon">✊</div>
         <div class="gesture-body">
-          <div class="gesture-title">Fist — Cancel shape</div>
-          <div class="gesture-desc">Close all fingers to cancel a shape currently being drawn.</div>
+          <div class="gesture-title">Fist — Cancel / Pause</div>
+          <div class="gesture-desc">Close all fingers to pause or cancel a shape being drawn.</div>
         </div>
       </div>
-
     </div>
 
     <div class="panel-section">
@@ -323,24 +230,13 @@
         <span style="color:var(--text-dim);">Rect</span><span><span class="kbd">R</span></span>
         <span style="color:var(--text-dim);">Circle</span><span><span class="kbd">C</span></span>
         <span style="color:var(--text-dim);">Arrow</span><span><span class="kbd">A</span></span>
-        <span style="color:var(--text-dim);">Fill</span><span><span class="kbd">G</span></span>
-        <span style="color:var(--text-dim);">Zoom +</span><span><span class="kbd">=</span></span>
-        <span style="color:var(--text-dim);">Zoom −</span><span><span class="kbd">-</span></span>
-        <span style="color:var(--text-dim);">Export</span><span><span class="kbd">Ctrl S</span></span>
+        <span style="color:var(--text-dim);">Zoom</span><span><span class="kbd">Scrl</span></span>
       </div>
     </div>
-
-    <div class="panel-section" style="margin-top:auto;">
-      <div style="font-size:10px;color:var(--text-dimmer);line-height:1.6;text-align:center;">
-        Air Pen Studio — free, no account needed.<br/>
-        All drawings stay on your device.<br/>
-        <span style="color:var(--text-dim);font-size:9px;letter-spacing:.05em;">Powered by MediaPipe Hands</span>
-      </div>
-    </div>
-
   </aside>
 </div>
 
+<!-- External Script -->
 <script src="script.js"></script>
 </body>
 </html>
